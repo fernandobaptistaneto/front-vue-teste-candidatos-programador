@@ -4,14 +4,14 @@
       <button @click="path = '/login'">Login</button>
       <button @click="path = '/count'">Count</button>
       <button @click="path = '/count'">Cadastar</button>
-      <button @click="path = '/count'">Listar Usuários</button>
+      <button @click="path = '/list_user'">Listar Usuários</button>
     </div>
   </nav>
   <div class="container-body">
     <count v-if="path === '/count'" />
     <login v-if="path === '/login'" />
     <!-- <cadastroUser v-if="path === '/cadastarUser'" /> -->
-    <!-- <listarUser v-if="path === '/listarUser'" /> -->
+    <list_user v-if="path === '/list_user'" />
   </div>
 </template>
 
@@ -23,6 +23,7 @@ export default {
   components: {
     login: defineAsyncComponent(() => import("@/views/login/index.vue")),
     count: defineAsyncComponent(() => import("@/views/count/index.vue")),
+    list_user: defineAsyncComponent(() => import("@/views/list_user/index.vue")),
   },
   setup() {
     const path = ref("/");
