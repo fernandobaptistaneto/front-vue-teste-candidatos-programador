@@ -1,36 +1,53 @@
-import http from "@/core/http";
+import http from '@/core/http'
 const state = {
   itens: [],
+  item: {
+    user: {
+      name: '',
+      username: '',
+      password: ''
+    }
+  },
   data_convert: [],
-  data_convert2: [],
-};
+  data_convert2: []
+}
 
 const getters = {
-  itens: (state) => state.itens,
-  data_convert: (state) => state.data_convert,
-};
+  itens: state => state.itens,
+  data_convert: state => state.data_convert,
+  item: state => state.item
+}
 
 const actions = {
-  async listar({ commit }, payload) {
-    const result = await http.get("/userList", { params: payload });
-    if (result.status != 200) throw new Error(result.data);
-    commit("set_itens", result.data);
-    return Promise.resolve(result.data);
+  async listar ({ commit }, payload) {
+    const result = await http.get('/userList', { params: payload })
+    if (result.status != 200) throw new Error(result.data)
+    commit('SET_ITENS', result.data)
+    return Promise.resolve(result.data)
   },
-  convert_timestamp({ commit }, tempo) {
-    const convert = new Date(tempo);
-    data_convert = convert.getDate() + "/" + (convert.getMonth() + 1) + "/" + convert.getFullYear();
-    commit("convert_timestamp", tempo);
-  },
-};
+  add ({ commit }, payload) {
+    // commit('ADD_USER', payload)
+    http
+      .post('/userCreate', payload)
+      .then(response => {
+        alert('Cadastrado com sucesso!')
+        commit('CLEAR_INPUTS')
+      })
+      .catch(error => {
+        alert('Falha ao cadastrar Usuário!', error)
+      })
+  }
+}
 
 const mutations = {
-  set_itens(state, payload) {
-    state.itens = payload;
+  SET_ITENS (state, payload) {
+    state.itens = payload
   },
-  convert_timestamp(state, tempo) {
-    state.data_convert2 = state.data_convert;
-  },
-};
+  CLEAR_INPUTS (state) {
+    state.item.user.name = ''
+    state.item.user.password = ''
+    state.item.user.username = ''
+  }
+}
 
-export default { state, mutations, actions, getters, namespaced: true };
+export default { state, mutations, actions, getters, namespaced: true }

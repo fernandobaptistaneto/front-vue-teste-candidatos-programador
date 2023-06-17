@@ -2,45 +2,85 @@
   <br />
   <br />
   <div class="container">
-    <form action="">
+    <form @submit.prevent="submit">
       <div class="card">
         <h1>Login</h1>
         <div class="inputBox">
-          <input v-model="username" autocomplete="false" type="text" required="required" />
+          <input v-model.trim="username" autocomplete="false" type="text" required="required" />
           <span class="user">Username</span>
         </div>
+        <div class="error" v-if="!v$.username.required">Name is required</div>
 
         <div class="inputBox">
           <input v-model="password" autocomplete="false" type="password" required="required" />
           <span>Password</span>
         </div>
 
-        <button @click.prevent="login" class="enter">Enter</button>
+        <button class="button" @click="teste" :disabled="submitStatus === 'PENDING'">Submit!</button>
+        <p class="typo__p" v-if="submitStatus === 'OK'">Thanks for your submission!</p>
+        <p class="typo__p" v-if="submitStatus === 'ERROR'">Please fill the form correctly.</p>
+        <p class="typo__p" v-if="submitStatus === 'PENDING'">Sending...</p>
+
+        <button @click.prevent="login" type="submit" class="enter">Enter</button>
       </div>
     </form>
   </div>
 </template>
 
 <script>
+import { useVuelidate } from "@vuelidate/core";
+import { required, email } from "@vuelidate/validators";
+import { mapGetters, mapActions } from "vuex";
+import login from './store'
+
 export default {
-  data: () => ({
-    username: "",
-    password: "",
-  }),
+  setup() {
+    return { v$: useVuelidate() };
+  },
+  data() {
+    return {
+      username: "",
+      password: "",
+      email: "",
+      submitStatus: ''
+    };
+  },
+  computed: {
+    ...mapGetters("login", ["getUsuario"]),
+  },
+  actions: {
+    ...mapActions('login', ['getUser'])
+  },
   methods: {
     login() {
-      if (this.username == "" || this.password == "") {
-        alert("Preencha todos os campos!");
-      }
-
-      if (this.username && this.password) {
-        if (this.username == "fernando" && this.password == "1234") {
-          alert("Usuario Logado com sucesso!");
-        } else {
-          alert("Usuario inválido!");
-        }
+      // if (this.username == "" || this.password == "") {
+      //   alert("Preencha todos os campos!");
+      // }
+      // if (this.username && this.password) {
+      //   if (this.username == "fernando" && this.password == "1234") {
+      //     alert("Usuario Logado com sucesso!");
+      //   } else {
+      //     alert("Usuario inválido!");
+      //   }
+      // }
+    },
+    submit() {
+      console.log('ta chamando',getUser)
+      if (this.v$.$invalid) {
+        this.submitStatus = "ERROR";
+      } else {
+        // do your submit logic here
+        this.submitStatus = "PENDING";
+        this.submitStatus = "OK";
       }
     },
+  },
+  validations() {
+    return {
+      username: { required },
+      password: { required },
+      email: { required, email },
+    };
   },
 };
 </script>
